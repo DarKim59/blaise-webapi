@@ -1,5 +1,10 @@
+using Blaise.Api.Providers;
+using Blaise.Core.Factories;
+using Blaise.Core.Interfaces;
+using Blaise.Core.Services;
 using System.Web.Http;
 using Unity;
+using Unity.Injection;
 using Unity.WebApi;
 
 namespace Blaise.Api
@@ -9,13 +14,21 @@ namespace Blaise.Api
         public static void RegisterComponents()
         {
 			var container = new UnityContainer();
-            
-            // register all your components with the container here
-            // it is NOT necessary to register your controllers
-            
-            // e.g. container.RegisterType<ITestService, TestService>();
-            
+
+            //configuration
+            var configurationProvider = new ConfigurationProvider();
+
+            //services
+            container.RegisterType<IPasswordService, PasswordService>();
+            container.RegisterType<IParkService, ParkService>();
+
+            //factories
+            var connectionConfig = configurationProvider.GetConnectionConfigurationModel();
+            container.RegisterSingleton<IConnectedServerFactory, ConnectedServerFactory>(
+                new InjectionConstructor(connectionConfig, container.Resolve<PasswordService>()));
+
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
+
     }
 }

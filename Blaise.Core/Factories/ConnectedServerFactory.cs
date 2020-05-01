@@ -1,7 +1,6 @@
 ﻿using Blaise.Core.Interfaces;
 using Blaise.Core.Models;
 using StatNeth.Blaise.API.ServerManager;
-using System;
 
 namespace Blaise.Core.Factories
 {
@@ -38,11 +37,6 @@ namespace Blaise.Core.Factories
                 configurationModel.UserName,
                 _passwordService.CreateSecurePassword(configurationModel.Password),
                 configurationModel.Binding);
-        }
-
-        IConnectedServer IConnectedServerFactory.GetConnection()
-        {
-            throw new NotImplementedException();
         }
     }
 }

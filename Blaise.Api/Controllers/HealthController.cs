@@ -4,14 +4,15 @@ using System.Web.Http.Description;
 
 namespace Blaise.Api.Controllers
 {
-    [RoutePrefix("api")]
+    [RoutePrefix("api/v1")]
     public class HealthController : ApiController
     {
+        [HttpGet]
         [Route("health")]
         [ResponseType(typeof(bool))]
-        public bool HealthCheck()
+        public IHttpActionResult HealthCheck()
         {
-            return true;
+            return Ok();
         }
     }
 }

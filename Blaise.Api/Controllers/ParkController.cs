@@ -1,4 +1,5 @@
-﻿using Blaise.Core.Models;
+﻿using Blaise.Core.Interfaces;
+using Blaise.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -6,22 +7,34 @@ using System.Web.Http.Description;
 
 namespace Blaise.Api.Controllers
 {
-    [RoutePrefix("api")]
+    [RoutePrefix("api/v1")]
     public class ParkController : ApiController
     {
+        private readonly IParkService _parkService;
+
+        public ParkController(IParkService parkService)
+        {
+            _parkService = parkService;
+        }
+
+        [HttpGet]
         [Route("parks")]
         [ResponseType(typeof(IEnumerable<ParkModel>))]
         public IHttpActionResult GetParks()
         {
-            return Ok(new List<ParkModel> { new ParkModel { Name = "TestCase" } });
+            var parkNames = _parkService.GetServerParkNames();
+
+            return Ok(parkNames);
         }
 
+        [HttpGet]
         [Route("parks/{parkName}/instruments/{instrumentName}/Id")]
         [ResponseType(typeof(Guid))]
         public IHttpActionResult GetInstrumentId(string parkName,string instrumentName)
         {
-            return Ok(Guid.NewGuid());
+            var instrumentId = _parkService.GetInstrumentId(parkName, instrumentName);
+            
+            return Ok(instrumentId);
         }
-
     }
 }

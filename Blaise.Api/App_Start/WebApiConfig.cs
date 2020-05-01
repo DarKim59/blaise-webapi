@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Serialization;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using Unity.WebApi;
 
 namespace Blaise.Api
 {
@@ -23,6 +24,8 @@ namespace Blaise.Api
 
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             config.Formatters.JsonFormatter.UseDataContractJsonSerializer = false;
+
+            UnityConfig.RegisterComponents();
         }
     }
 }
