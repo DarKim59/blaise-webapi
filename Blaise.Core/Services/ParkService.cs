@@ -1,4 +1,5 @@
 ﻿
+using Blaise.Core.Exceptions;
 using Blaise.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,13 @@ namespace Blaise.Core.Services
 
         public Guid GetInstrumentId(string instrumentName, string serverParkName)
         {
-
             var connection = _connectionFactory.GetConnection();
             var serverPark = connection.GetServerPark(serverParkName);
             var survey = serverPark.Surveys.FirstOrDefault(s => string.Equals(s.Name, instrumentName, StringComparison.OrdinalIgnoreCase));
 
             if (survey == null)
             {
-                throw new ArgumentOutOfRangeException(string.Format("Instrument: {0} not found on server park: {1}", instrumentName, serverParkName));
+                throw new DataNotFoundException($"Instrument '{instrumentName}' not found on server park '{serverParkName}'");
             }
 
             return survey.InstrumentID;

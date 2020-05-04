@@ -1,4 +1,5 @@
 ﻿using Blaise.Core.Models;
+using System;
 using System.Configuration;
 
 namespace Blaise.Api.Providers
@@ -13,9 +14,14 @@ namespace Blaise.Api.Providers
                 UserName = ConfigurationManager.AppSettings["ServerUserName"],
                 Password = ConfigurationManager.AppSettings["ServerPassword"],
                 Binding = ConfigurationManager.AppSettings["ServerBinding"],
-                Port = 8031
+                Port = ConvertToInt(ConfigurationManager.AppSettings["ServerPort"])
             };
             return configurationModel;
+        }
+
+        private int ConvertToInt(string integer)
+        {
+            return Int32.Parse(integer);
         }
     }
 }
