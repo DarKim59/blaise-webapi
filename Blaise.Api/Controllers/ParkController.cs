@@ -1,28 +1,27 @@
-﻿using Blaise.Core.Interfaces;
-using Blaise.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Blaise.Nuget.Api.Contracts.Interfaces;
 
 namespace Blaise.Api.Controllers
 {
     [RoutePrefix("api/v1")]
     public class ParkController : ApiController
     {
-        private readonly IParkService _parkService;
+        private readonly IFluentBlaiseApi _blaiseApi;
 
-        public ParkController(IParkService parkService)
+        public ParkController(IFluentBlaiseApi blaiseApi)
         {
-            _parkService = parkService;
+            _blaiseApi = blaiseApi;
         }
 
         [HttpGet]
         [Route("parks")]
-        [ResponseType(typeof(IEnumerable<ParkModel>))]
+        [ResponseType(typeof(IEnumerable<string>))]
         public IHttpActionResult GetParks()
         {
-            var parkNames = _parkService.GetServerParkNames();
+            var parkNames = _blaiseApi.GetServerParkNames();
 
             return Ok(parkNames);
         }
@@ -32,8 +31,11 @@ namespace Blaise.Api.Controllers
         [ResponseType(typeof(Guid))]
         public IHttpActionResult GetInstrumentId(string parkName,string instrumentName)
         {
-            var instrumentId = _parkService.GetInstrumentId(parkName, instrumentName);
-            
+            var instrumentId = _blaiseApi
+                .WithServerPark(parkName)
+                .ForInstrument(instrumentName)
+                .GetInstrumentId();
+
             return Ok(instrumentId);
         }
     }
