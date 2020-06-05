@@ -1,5 +1,6 @@
 
 using System.Web.Http;
+using Blaise.Nuget.Api;
 using Blaise.Nuget.Api.Contracts.Interfaces;
 using Unity;
 using Unity.WebApi;
@@ -12,7 +13,7 @@ namespace Blaise.Api
         {
 			var container = new UnityContainer();
 
-            container.RegisterType<IFluentBlaiseApi, IFluentBlaiseApi>();
+            container.RegisterType<IFluentBlaiseApi, FluentBlaiseApi>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
