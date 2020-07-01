@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Blaise.Nuget.Api.Contracts.Interfaces;
@@ -21,22 +20,9 @@ namespace Blaise.Api.Controllers
         [ResponseType(typeof(IEnumerable<string>))]
         public IHttpActionResult GetParks()
         {
-            var parkNames = _blaiseApi.GetServerParkNames();
+            var parkNames = _blaiseApi.ServerParks;
 
             return Ok(parkNames);
-        }
-
-        [HttpGet]
-        [Route("parks/{parkName}/instruments/{instrumentName}/Id")]
-        [ResponseType(typeof(Guid))]
-        public IHttpActionResult GetInstrumentId(string parkName,string instrumentName)
-        {
-            var instrumentId = _blaiseApi
-                .WithServerPark(parkName)
-                .ForInstrument(instrumentName)
-                .GetInstrumentId();
-
-            return Ok(instrumentId);
         }
     }
 }
