@@ -28,15 +28,20 @@ namespace Blaise.Api.Controllers
         }
 
         [HttpPost]
-        [Route("parks/{parkName}/instruments/{instrumentName}/Backup")]
-        public IHttpActionResult BackupSurvey([FromUri] string parkName, [FromUri] string instrumentName, [FromBody] BackupModel backupModel)
+        [Route("surveys/backup")]
+        public IHttpActionResult BackupSurveys([FromBody] BackupModel backupModel)
         {
-            _blaiseApi
-                .WithServerPark(parkName)
-                .WithInstrument(instrumentName)
-                .Survey
-                .ToPath(backupModel.DestinationPath)
-                .Backup();
+            var surveys = _blaiseApi.Surveys;
+
+            foreach (var survey in surveys)
+            {
+                _blaiseApi
+                    .WithServerPark(survey.ServerPark)
+                    .WithInstrument(survey.Name)
+                    .Survey
+                    .ToPath(backupModel.DestinationPath)
+                    .Backup();
+            }
 
             return Ok();
         }
