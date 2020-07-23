@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Blaise.Core.Interfaces;
-using Blaise.Nuget.Api.Contracts.Interfaces;
 using Google.Cloud.Diagnostics.AspNet;
 
 namespace Blaise.Api.Controllers
@@ -15,7 +15,7 @@ namespace Blaise.Api.Controllers
         private readonly IWebApiExceptionLogger _exceptionLogger;
 
         public ParkController(
-            IParkService parkService, 
+            IParkService parkService,
             IWebApiExceptionLogger exceptionLogger)
         {
             _parkService = parkService;
@@ -29,7 +29,15 @@ namespace Blaise.Api.Controllers
         {
             try
             {
-                return Ok(_parkService.GetParks());
+                using (CloudTrace.Tracer.StartSpan("GetParks"))
+                {
+                    var parks = _parkService.GetParks().ToList();
+
+                    Console.Out.WriteLine($"Successfully received a list of server parks '{string.Join(", ", parks)}'");
+
+                    //throw new Exception($"There was an error in calling 'GetParks'");
+                    return Ok(parks);
+                }
             }
             catch (Exception e)
             {
