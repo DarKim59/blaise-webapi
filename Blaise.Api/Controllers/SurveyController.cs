@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Blaise.Api.Models;
-using Blaise.Nuget.Api.Contracts.Interfaces;
+using Blaise.Core.Interfaces;
+using Google.Cloud.Diagnostics.AspNet;
 using StatNeth.Blaise.API.ServerManager;
 
 namespace Blaise.Api.Controllers
@@ -10,11 +12,15 @@ namespace Blaise.Api.Controllers
     [RoutePrefix("api/v1")]
     public class SurveyController : ApiController
     {
-        private readonly IFluentBlaiseApi _blaiseApi;
+        private readonly ISurveyService _surveyService;
+        private readonly IWebApiExceptionLogger _exceptionLogger;
 
-        public SurveyController(IFluentBlaiseApi blaiseApi)
+        public SurveyController(
+            ISurveyService surveyService, 
+            IWebApiExceptionLogger exceptionLogger)
         {
-            _blaiseApi = blaiseApi;
+            _surveyService = surveyService;
+            _exceptionLogger = exceptionLogger;
         }
 
         [HttpGet]
@@ -22,9 +28,15 @@ namespace Blaise.Api.Controllers
         [ResponseType(typeof(IEnumerable<ISurvey>))]
         public IHttpActionResult GetSurveys()
         {
-            var surveys = _blaiseApi.Surveys;
-
-            return Ok(surveys);
+            try
+            {
+                return Ok(_surveyService.GetSurveys());
+            }
+            catch (Exception e)
+            {
+                _exceptionLogger.Log(e, ActionContext);
+                throw;
+            }
         }
 
         [HttpGet]
@@ -32,51 +44,47 @@ namespace Blaise.Api.Controllers
         [ResponseType(typeof(IEnumerable<ISurvey>))]
         public IHttpActionResult GetSurveysByPark([FromUri] string parkName)
         {
-            var surveys = _blaiseApi
-                .WithServerPark(parkName)
-                .Surveys;
-
-            return Ok(surveys);
+            try
+            {
+                return Ok(_surveyService.GetSurveysByPark(parkName));
+            }
+            catch (Exception e)
+            {
+                _exceptionLogger.Log(e, ActionContext);
+                throw;
+            }
         }
 
         [HttpPost]
         [Route("surveys/backup")]
         public IHttpActionResult BackupSurveys([FromBody] BackupModel backupModel)
         {
-            var surveys = _blaiseApi.Surveys;
-
-            foreach (var survey in surveys)
+            try
             {
-                _blaiseApi
-                    .WithServerPark(survey.ServerPark)
-                    .WithInstrument(survey.Name)
-                    .Survey
-                    .ToPath(backupModel.DestinationPath)
-                    .Backup();
+                _surveyService.BackupSurveys(backupModel.DestinationPath);
+                return Ok();
             }
-
-            return Ok();
+            catch (Exception e)
+            {
+                _exceptionLogger.Log(e, ActionContext);
+                throw;
+            }
         }
 
         [HttpPost]
         [Route("parks/{parkName}/surveys/backup")]
         public IHttpActionResult BackupSurveysByPark([FromUri] string parkName, [FromBody] BackupModel backupModel)
         {
-            var surveys = _blaiseApi
-                .WithServerPark(parkName)
-                .Surveys;
-
-            foreach (var survey in surveys)
+            try
             {
-                _blaiseApi
-                    .WithServerPark(survey.ServerPark)
-                    .WithInstrument(survey.Name)
-                    .Survey
-                    .ToPath(backupModel.DestinationPath)
-                    .Backup();
+                _surveyService.BackupSurveysByPark(parkName, backupModel.DestinationPath);
+                return Ok();
             }
-
-            return Ok();
+            catch (Exception e)
+            {
+                _exceptionLogger.Log(e, ActionContext);
+                throw;
+            }
         }
     }
 }
