@@ -62,6 +62,7 @@ namespace Blaise.Api.Controllers
             try
             {
                 _surveyService.BackupSurveys(backupModel.DestinationPath);
+                
                 return Ok();
             }
             catch (Exception e)
@@ -78,6 +79,7 @@ namespace Blaise.Api.Controllers
             try
             {
                 _surveyService.BackupSurveysByPark(parkName, backupModel.DestinationPath);
+                
                 return Ok();
             }
             catch (Exception e)
