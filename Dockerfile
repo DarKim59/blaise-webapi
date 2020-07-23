@@ -3,7 +3,7 @@
 
 FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2016
 ARG source
-RUN ECHO $source
-RUN ECHO "hello"
+RUN cmd /c ECHO $source
+RUN cmd /c ECHO "hello"
 WORKDIR /inetpub/wwwroot
 COPY ${source:-obj/Docker/publish} .
