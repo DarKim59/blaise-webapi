@@ -2,8 +2,7 @@
 #For more information, please see https://aka.ms/containercompat 
 
 FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2016
-ARG source
-RUN cmd /c ECHO $source
-RUN cmd /c ECHO "hello"
+ENV staging-directory
+RUN cmd /c ECHO $staging-directory
 WORKDIR /inetpub/wwwroot
-COPY ${source:-obj/Docker/publish} .
+COPY ${staging-directory:-obj/Docker/publish} .
