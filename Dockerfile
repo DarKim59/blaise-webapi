@@ -6,7 +6,7 @@
 #COPY . .
 #
 
-FROM microsoft/dotnet-framework:4.7.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2016
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
@@ -22,7 +22,6 @@ COPY . ./
 WORKDIR /app/blaiseAPI
 RUN msbuild /p:Configuration=Release
 
-FROM microsoft/aspnet:4.7.2 AS runtime
 WORKDIR /inetpub/wwwroot
 COPY --from=build /app/blaiseAPI/. ./
 
