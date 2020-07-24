@@ -1,2 +1,7 @@
-!obj\Docker\publish\*
-!obj\Docker\empty\
+**/bin
+**/obj
+**/out
+**/.vscode
+**/.vs
+.dotnet
+.Microsoft.DotNet.ImageBuilder
