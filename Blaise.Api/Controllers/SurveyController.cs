@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Blaise.Api.Models;
 using Blaise.Core.Interfaces;
 using Google.Cloud.Diagnostics.AspNet;
 using StatNeth.Blaise.API.ServerManager;
@@ -16,7 +15,7 @@ namespace Blaise.Api.Controllers
         private readonly IWebApiExceptionLogger _exceptionLogger;
 
         public SurveyController(
-            ISurveyService surveyService, 
+            ISurveyService surveyService,
             IWebApiExceptionLogger exceptionLogger)
         {
             _surveyService = surveyService;
@@ -47,40 +46,6 @@ namespace Blaise.Api.Controllers
             try
             {
                 return Ok(_surveyService.GetSurveysByPark(parkName));
-            }
-            catch (Exception e)
-            {
-                _exceptionLogger.Log(e, ActionContext);
-                throw;
-            }
-        }
-
-        [HttpPost]
-        [Route("surveys/backup")]
-        public IHttpActionResult BackupSurveys([FromBody] BackupModel backupModel)
-        {
-            try
-            {
-                _surveyService.BackupSurveys(backupModel.DestinationPath);
-                
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _exceptionLogger.Log(e, ActionContext);
-                throw;
-            }
-        }
-
-        [HttpPost]
-        [Route("parks/{parkName}/surveys/backup")]
-        public IHttpActionResult BackupSurveysByPark([FromUri] string parkName, [FromBody] BackupModel backupModel)
-        {
-            try
-            {
-                _surveyService.BackupSurveysByPark(parkName, backupModel.DestinationPath);
-                
-                return Ok();
             }
             catch (Exception e)
             {
